@@ -194,12 +194,11 @@ def compute_gradient(x, y, w, b):
 
     return dj_dw, dj_db
 
-
-@st.cache(suppress_st_warning=True)
+@st.cache
 def gradient_decient(x, y, w_in, b_in, alpha, iteration, cost_function, compute_gradient):
     J_history = []
     p_history = []
-    output_arr = []
+    output_dict = dict()
     b = b_in
     w = w_in
     for i in range(iteration):
@@ -212,9 +211,9 @@ def gradient_decient(x, y, w_in, b_in, alpha, iteration, cost_function, compute_
             p_history.append([w, b])
 
         if i % math.ceil(iteration / 10) == 0:
-            output_arr.append([])
+            output_dict[i]=i,J_history[-1],dj_dw,dj_db,w,b
 
-    return w, b, J_history, p_history
+    return w, b, J_history, p_history,output_dict
 
 
 x_new = np.zeros(len(x_train))
@@ -228,7 +227,12 @@ for i in range(len(x_train)):
 initial_w = 1
 initial_b = 2
 alpha = 1.0e-2
-number_of_iterations = 2000
+number_of_iterations = 33
 
-final_w, final_b, J, p = gradient_decient(x_new, y_new, initial_w, initial_b, alpha, number_of_iterations,
-                                          cost_function, compute_gradient)
+final_w, final_b, J, p,output_iterations= gradient_decient(x_new, y_new, initial_w, initial_b, alpha, number_of_iterations,
+                                                      cost_function, compute_gradient)
+
+for i in range(number_of_iterations):
+    if i % math.ceil(number_of_iterations / 10) == 0:
+        st.markdown(f"Iteration:   `{output_iterations[i][0]}`,   Cost: `{output_iterations[i][1]:0.4f}`,  dj_dw:`{output_iterations[i][2]:0.4f}`, dj_db:`{output_iterations[i][3]:0.4f}`,  w:`{output_iterations[i][4]:0.4f}`,  b:`{output_iterations[i][5]:0.4f}`  ")
+
