@@ -76,7 +76,47 @@ st.markdown("- The cost equation (1) above shows that if $w$ and $b$ can be sele
 st.markdown("- Now to minimize the cost function we use an algorithm called Gradient Descent. ")
 
 st.set_option('deprecation.showPyplotGlobalUse', False)
-st.pyplot(fr.soup_bowl())
+
+
+def soup_bowl():
+    """ Create figure and plot with a 3D projection"""
+    fig = plt.figure(figsize=(10, 10))
+
+    # Plot configuration
+    ax = fig.add_subplot(111, projection='3d')
+    ax.xaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+    ax.yaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+    ax.zaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+    ax.zaxis.set_rotate_label(True)
+    ax.view_init(45, -120)
+
+    # Useful linearspaces to give values to the parameters w and b
+    w = np.linspace(-20, 20, 100)
+    b = np.linspace(-20, 20, 100)
+
+    # Get the z value for a bowl-shaped cost function
+    z = np.zeros((len(w), len(b)))
+    j = 0
+    for x in w:
+        i = 0
+        for y in b:
+            z[i, j] = x ** 2 + y ** 2
+            i += 1
+        j += 1
+
+    # Meshgrid used for plotting 3D functions
+    W, B = np.meshgrid(w, b)
+
+    # Create the 3D surface plot of the bowl-shaped cost function
+    ax.plot_surface(W, B, z, cmap="Spectral_r", alpha=0.7, antialiased=False)
+    ax.plot_wireframe(W, B, z, color='k', alpha=0.1)
+    ax.set_xlabel("$w$")
+    ax.set_ylabel("$b$")
+    ax.set_zlabel("$J(w,b)$", rotation=90)
+    ax.set_title("$J(w,b)$", size=15)
+
+
+st.pyplot(soup_bowl())
 code_cost_fun = ''' def cost_function(x, y, w, b):
     m = x.shape[0]
     cost_sum = 0
@@ -256,9 +296,8 @@ st.markdown("The graph on the left shows **untrained model** and graph on the ri
 cost_and_iteration = {"Cost": J, "Iterations": np.arange(0, len(J))}
 dataframe_cost_iterations = pd.DataFrame(cost_and_iteration)
 fig4 = px.line(dataframe_cost_iterations, x="Iterations", y="Cost", title='Cost vs Iterations or Learning Curve')
-st.plotly_chart(fig4,theme="streamlit")
+st.plotly_chart(fig4, theme="streamlit")
 
 st.markdown("- Learning curve shows that our model reached to a flat line at approximately at 300 iterations.")
 st.markdown("- When the learning curve flattens it means we have converged i.e the function has reached minimum and "
             "after that number of iteration does not matter and Cost of the function will not be reduced any further.")
-
