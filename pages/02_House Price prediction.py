@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import math
-
+import plotly.express as px
 import formulas as fr
 
 st.title("How Linear Regression is implemented")
@@ -194,6 +194,7 @@ def compute_gradient(x, y, w, b):
 
     return dj_dw, dj_db
 
+
 @st.cache
 def gradient_decient(x, y, w_in, b_in, alpha, iteration, cost_function, compute_gradient):
     J_history = []
@@ -211,9 +212,9 @@ def gradient_decient(x, y, w_in, b_in, alpha, iteration, cost_function, compute_
             p_history.append([w, b])
 
         if i % math.ceil(iteration / 10) == 0:
-            output_dict[i]=i,J_history[-1],dj_dw,dj_db,w,b
+            output_dict[i] = i, J_history[-1], dj_dw, dj_db, w, b
 
-    return w, b, J_history, p_history,output_dict
+    return w, b, J_history, p_history, output_dict
 
 
 x_new = np.zeros(len(x_train))
@@ -227,12 +228,37 @@ for i in range(len(x_train)):
 initial_w = 1
 initial_b = 2
 alpha = 1.0e-2
-number_of_iterations = 33
+number_of_iterations = 3000
 
-final_w, final_b, J, p,output_iterations= gradient_decient(x_new, y_new, initial_w, initial_b, alpha, number_of_iterations,
-                                                      cost_function, compute_gradient)
+final_w, final_b, J, p, output_iterations = gradient_decient(x_new, y_new, initial_w, initial_b, alpha,
+                                                             number_of_iterations,
+                                                             cost_function, compute_gradient)
 
 for i in range(number_of_iterations):
     if i % math.ceil(number_of_iterations / 10) == 0:
-        st.markdown(f"Iteration:   `{output_iterations[i][0]}`,   Cost: `{output_iterations[i][1]:0.4f}`,  dj_dw:`{output_iterations[i][2]:0.4f}`, dj_db:`{output_iterations[i][3]:0.4f}`,  w:`{output_iterations[i][4]:0.4f}`,  b:`{output_iterations[i][5]:0.4f}`  ")
+        st.markdown(
+            f"Iteration:   `{output_iterations[i][0]}`,   Cost: `{output_iterations[i][1]:0.4f}`,  dj_dw:`{output_iterations[i][2]:0.4f}`, dj_db:`{output_iterations[i][3]:0.4f}`,  w:`{output_iterations[i][4]:0.4f}`,  b:`{output_iterations[i][5]:0.4f}`  ")
+
+new_predtd_y = predicted_y(x_train, final_w, final_b)
+
+fig3, ax = plt.subplots()
+ax.scatter(x_train, y_train, marker="x", c="blue")
+ax.plot(x_train, new_predtd_y, c="red")
+plt.xlabel("Size of house in sq feet")
+plt.ylabel("Price of house in lacs")
+plt.title("Housing price")
+
+col1, col2 = st.columns(2)
+col1.pyplot(fig1)
+col2.pyplot(fig3)
+
+st.markdown("The graph on the left shows **untrained model** and graph on the right shows **trained model**")
+cost_and_iteration = {"Cost": J, "Iterations": np.arange(0, len(J))}
+dataframe_cost_iterations = pd.DataFrame(cost_and_iteration)
+fig4 = px.line(dataframe_cost_iterations, x="Iterations", y="Cost", title='Cost vs Iterations or Learning Curve')
+st.plotly_chart(fig4,theme="streamlit")
+
+st.markdown("- Learning curve shows that our model reached to a flat line at approximately at 300 iterations.")
+st.markdown("- When the learning curve flattens it means we have converged i.e the function has reached minimum and "
+            "after that number of iteration does not matter and Cost of the function will not be reduced any further.")
 
