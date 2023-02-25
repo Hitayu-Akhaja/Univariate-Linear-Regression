@@ -4,8 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 import plotly.express as px
-from sklearn.linear_model import LinearRegression
-import formulas as fr
+
 
 st.title("How Linear Regression is implemented")
 st.markdown('As we are performing Linear regression with one variable we define function as $f_{w,b}(x) = wx+b$  '
@@ -268,8 +267,8 @@ for i in range(len(x_train)):
 
 initial_w = 1
 initial_b = 2
-alpha = 1.0e-4
-number_of_iterations = 100000
+alpha = 1.0e-2
+number_of_iterations = 2500
 
 final_w, final_b, J, p, output_iterations = gradient_decient(x_new, y_new, initial_w, initial_b, alpha,
                                                              number_of_iterations,
@@ -303,6 +302,6 @@ st.markdown("- Learning curve shows that our model reached to a flat line at app
 st.markdown("- When the learning curve flattens it means we have converged i.e the function has reached minimum and "
             "after that number of iteration does not matter and Cost of the function will not be reduced any further.")
 
-# # making model using scikit learn library
-# linear_model = LinearRegression()
-# print(x_train)
+
+
+
